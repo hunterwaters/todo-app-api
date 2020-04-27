@@ -1,17 +1,14 @@
 const express =require('express')
 const app = express();
 const knex = require('knex')
+const mongoose = require('mongoose');
+require('dotenv/config');
 //const jsonParser = bodyParser.json();
 
 app.use(express.json());
-
+const loginRoute = require('./routes/login');
+app.use('/login', loginRoute);
 const port = process.env.PORT || 8000;
-
-const logins = [
-   { id : 1, email: '123@gmail.com', password: 'pass123' },
-   { id : 2, email: '456@gmail.com', password: 'pass456' },
-   { id : 3, email: '789@gmail.com', password: 'pass789' }
-]
 
 
 app.get('/', (req, res) => {
@@ -24,27 +21,11 @@ app.get('/api/logins', (req,res) => {
     res.send([1,2,3])
 });
 
-app.get('/api/logins/:id', (req, res) => {
-   const login = logins.find(c => c.id === parseInt(req.params.id))
-   if(!login)  res.status(404).send('The Login with given id was not found')
-   res.send(login);
-});
-
-app.post('/api/logins' , (req, res) => {
-    if(!req.body.email || !req.body.password) {
-        res.status(400).send('Email and Password are required');
-            }
-        else {
-             return res.status(200).send('Welcome Back!!')
-        }
-    const login = {
-        id: logins.length + 1,
-        email: req.body.email,
-        password: req.body.password
-    };
-    logins.push(login);
-    res.send(login);
-})
+mongoose.connect(
+    'process.env.DB_URL',
+     { useNewUrlParser: true },
+    () => console.log('connected to database!!')
+    );
 
 const todos = [
    { id: 1, title: 'title1', summary: 'this is summary 1', date: '10/02/2019' },
@@ -69,6 +50,17 @@ app.post('/api/todos' , (req, res) => {
     res.send(todo);
     
 });
+
+
+app.get('/api/todos/:id', (req, res) => {
+    const todo = todos.find(c => c.id === parseInt(req.params.id))
+    if(!todo)res.status(404).send('The Todo with given id was not found')
+    res.send(todo);
+ });
+
+
+
+
 
 
 

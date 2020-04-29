@@ -7,74 +7,147 @@ const { NODE_ENV } = require('../postgrator-config')
 const app = express();
 const knex = require('knex')
 require('dotenv/config');
-const loginRouter = require('./routes/login')
-;
+const bodyParser = require('body-parser')
 
-const app = express()
-//const jsonParser = bodyParser.json();
+const morganOption = (NODE_ENV === 'production')
+? 'tiny'
+: 'common';
+
 
 app.use(morgan(morganOption))
 app.use(helmet())
 app.use(cors())
 app.use(express.json());
-app.use('/login', loginRouter);
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json())
 
+// Error Handler Function
+app.use(( req, res, next)=> {
+    const error = new Error('Not Found');
+    error.status = 404;
+    next(error);
+})
 
-const db = knex({
-    client: 'pg',
-    connection: DATABASE_URL
-  })
+app.use(( error, req, res, next) => {
+    res.status(error.status || 500);
+    res.json({
+        error: {
+            message: error.message
+        }
+    });
+});
 
-  const morganOption = (NODE_ENV === 'production')
-? 'tiny'
-: 'common';
-
-
-app.listen(port, () => console.log(`Listening on port ${port}...`));
 
 app.get('/', (req, res) => {
     res.send("Hello World");
 });
+    //todolist Endpoints!!
 
-app.get('/api/logins', (req,res) => {
-    res.send([1,2,3])
+    app.get('/api/todolist', (req, res, next)=> {
+        res.status(200).json({
+            message: 'Handling GET requests to /todolist'
+        });
+    });
+
+    app.delete('/api/todolist' , (req, res, next) => {
+        res.status(200).json({
+            message: 'Handling DELETE requests to /todolist'
+        });
+    });
+    
+
+//todolist id Endpoints!!
+
+app.get('/api/todolist/:id', (req, res, next ) => {
+    const id = req.params.id;
+    if(id === 'special' ){
+        res.status(200).json({
+            message: 'You discovered the special ID'
+            });
+        } else {
+            res.status(200).json({
+                message: 'You passed an Id'
+            });
+        }
+    });
+
+        //Addtodo Endpoint!!
+
+        app.post('/api/addtodo' , (req, res, next) => {
+            if(!req.body.title || !req.body.summary || !req.body.date) {
+                res.status(400).send('Title, Summary, and Date are required!!');
+                    }
+                else {
+                     return res.status(201).send('Todo has been successfully added!!!!')
+                }
+            const todo = {
+                id: req.body.id,
+                title: req.body.title,
+                summary: req.body.summary,
+                date: req.body.date
+            };
+            todos.push(todo);
+            res.send(todo);
+            
+        });
+
+
+//Login Endpoints!!!
+
+app.get('/api/login', (req,res, next) => {
+    res.status(200).json({
+        message: 'Handling GET request to /login'
+    });
+});
+
+app.delete('/api/login', (req, res, next) => {
+    res.status(200).json({
+        message: 'Handling DELETE request from /login'
+    });
 });
 
 
-app.post('/api/todos' , (req, res) => {
-    if(!req.body.title || !req.body.summary || !req.body.date) {
-        res.status(400).send('Title, Summary, and Date are required!!');
+app.post('/api/login' , (req, res, next) => {
+    const login = {
+        id: req.body.id,
+        email: req.body.title,
+        pssword: req.body.summary
+    };
+    if(!req.body.email || !req.body.password) {
+        res.status(400).send('Email and Password  are required!!');
             }
         else {
-             return res.status(200).send('Here are your todos!!')
+              res.status(201).json({
+                  message: 'Login was Created',
+                  login: login
+              });
+            }
+        })
+
+
+//Login id Endpoints!!
+
+
+ app.get('/api/login/:id', (req, res, next) => {
+    const id = req.params.id;
+    if(id === 'special' ){
+        res.status(200).json({
+            message: 'You discovered the special ID'
+            });
+        } else {
+            res.status(200).json({
+                message: 'You passed an Id'
+            });
         }
-    const todo = {
-        id: todos.length + 1,
-        title: req.body.title,
-        summary: req.body.summary
-    };
-    todos.push(todo);
-    res.send(todo);
-    
-});
+    });
 
-app.get('/api/todos/:id', (req, res) => {
-    const todo = todos.find(c => c.id === parseInt(req.params.id))
-    if(!todo)res.status(404).send('The Todo with given id was not found')
-    res.send(todo);
- });
+    app.delete('/api/login/:id', (req, res, next) => {
+        res.status(200).json({
+            message: 'Login Deleted!!'
+        });
+    });
 
 
-app.use(function errorHandler(error, req, res, next) {
-    let response
-    if(NODE_ENV === 'production') {
-        response = { error: { message: 'server error'}}
-    } else {
-        console.error(error)
-        response = { message: error.message, error }
-    }
-    res.status(500).json(response)
-})
 
 module.exports = app
 

@@ -21,12 +21,35 @@ app.use(express.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
-// Error Handler Function
-//app.use(( req, res, next)=> {
-    //const error = new Error('Not Found');
-    //error.status = 404;
-    //next(error);
-//})
+app.use((req ,res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 
+    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+        );
+        if(req.method === 'OPTIONS') {
+            res.header(' Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET')
+            return res.status(200).json({})
+        }
+        next();
+});
+
+const logins = [
+    {
+        "id": "123456",
+        "email": "hello@gmail.com" ,
+    "password": "password1"
+},
+{
+    "id": "45364576",
+    "email": "bye@gmail.com" ,
+"password": "password2"
+},
+{
+    "id": "helloworld",
+    "email": "wow@gmail.com" ,
+"password": "password3"
+},
+]
 
 app.use(( error, req, res, next) => {
     res.status(error.status || 500);
@@ -139,11 +162,20 @@ app.post('/api/login' , (req, res, next) => {
         }
     });
 
-    app.delete('/api/login/:id', (req, res, next) => {
-        res.status(200).json({
-            message: 'Login Deleted!!'
-        });
+    app.delete('/api/login/:id', (req, res) => {
+        const {id} = req.params;
+
+        const index = logins.findIndex(c => c.id === id) ;
+
+        if(index === -1 ) {
+            return res
+            .status(404)
+            .send('Login not Found!');
+        }
+        logins.splice(index, 1);
+        res.send('Deleted')
     });
+
 
 
 

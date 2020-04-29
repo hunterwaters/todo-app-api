@@ -1,17 +1,14 @@
 const express = require('express');
-const router = express.Router();
-const Login = require('../models/Login')
-const mongoose = require('mongoose');
+const loginRouter = express.Router();
 
-const logins = [
-    { id : 1, email: '123@gmail.com', password: 'pass123' },
-    { id : 2, email: '456@gmail.com', password: 'pass456' },
-    { id : 3, email: '789@gmail.com', password: 'pass789' }
- ]
+//router.use(express.json());
 
-router.get('/', (req, res) => {
+loginRouter
+.route("/")
+.get((req, res) => {
     res.send("We are on login!!")
-})
+    const knexInstance = req.app.get('db')
+});
 
 router.post('/', (req,res) => {
     const login = new Login({
@@ -27,7 +24,6 @@ router.post('/', (req,res) => {
         console.log(err);
     })
 });
-
 
 router.post('/' , (req, res) => {
     if(!req.body.email || !req.body.password) {
@@ -52,4 +48,4 @@ router.post('/' , (req, res) => {
  });
 
 
-module.exports = router;
+module.exports = loginRouter;

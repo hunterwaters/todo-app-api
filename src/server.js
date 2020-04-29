@@ -1,15 +1,30 @@
 const express = require('express');
-const knex = require('knex');
 const bodyParser = require('body-parser');
 const jsonParser = bodyParser.json();
 const app = express();
+const app = require('./app')
+const knex = require('knex')
 
-const PORT = process.env.PORT || 8000;
+const { PORT, DATABASE_URL } = require('./config')
 
 const db = knex({
-    client: 'pg',
-    connection: DATABASE_URL
+  client: 'pg',
+  connection: DATABASE_URL
 })
+
+app.set('db', db)
+
+app.listen(PORT, () => {
+  console.log(`Server listening at http://localhost:${PORT}`)
+})
+
+
+
+
+
+
+
+
  /*
 app.post ('api/login', jsonParser, (req, res) => {
   let {email, password} = req.body;
@@ -35,10 +50,3 @@ app.post ('api/login', jsonParser, (req, res) => {
 */
 
 
-app.get('/api/*', (req, res) => {
-  res.json({ok: true});
-});
-
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-
-module.exports = {app};

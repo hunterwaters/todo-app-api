@@ -22,11 +22,11 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
 // Error Handler Function
-app.use(( req, res, next)=> {
-    const error = new Error('Not Found');
-    error.status = 404;
-    next(error);
-})
+//app.use(( req, res, next)=> {
+    //const error = new Error('Not Found');
+    //error.status = 404;
+    //next(error);
+//})
 
 app.use(( error, req, res, next) => {
     res.status(error.status || 500);
@@ -74,21 +74,20 @@ app.get('/api/todolist/:id', (req, res, next ) => {
         //Addtodo Endpoint!!
 
         app.post('/api/addtodo' , (req, res, next) => {
-            if(!req.body.title || !req.body.summary || !req.body.date) {
-                res.status(400).send('Title, Summary, and Date are required!!');
-                    }
-                else {
-                     return res.status(201).send('Todo has been successfully added!!!!')
-                }
             const todo = {
-                id: req.body.id,
                 title: req.body.title,
                 summary: req.body.summary,
                 date: req.body.date
             };
-            todos.push(todo);
-            res.send(todo);
-            
+            if(!req.body.title || !req.body.summary || !req.body.date) {
+                res.status(400).send('Title, Summary, and Date are required!!');
+                    }
+                else {
+                      res.status(201).json({
+                          message: "todo was created!",
+                          todo: todo
+                      })
+                }
         });
 
 
@@ -109,9 +108,8 @@ app.delete('/api/login', (req, res, next) => {
 
 app.post('/api/login' , (req, res, next) => {
     const login = {
-        id: req.body.id,
-        email: req.body.title,
-        pssword: req.body.summary
+        email: req.body.email,
+        password: req.body.password
     };
     if(!req.body.email || !req.body.password) {
         res.status(400).send('Email and Password  are required!!');

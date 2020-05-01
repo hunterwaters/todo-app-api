@@ -53,7 +53,8 @@ describe('DELETE /api/todolist/:id', () => {
 describe(`POST /api/login`, () => {
     it(`creates a login, responding with  201 and the new login in json format`, function () {
         const newLogin = {
-            username: "testusername",
+            id: "12345",
+            email: "testusername",
             password: "testpassword"
         }
         return supertest(app)
@@ -61,8 +62,9 @@ describe(`POST /api/login`, () => {
         .send(newLogin)
         .expect(201)
         .expect( res => {
-            expect(res.body.username).to.eql(newLogin.username)
+            expect(res.body.email).to.eql(newLogin.email)
             expect(res.body.password).to.eql(newLogin.password)
+            expect(res.body.id).to.eql(newLogin.id)
             })
         })
     })

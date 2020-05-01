@@ -1,22 +1,31 @@
 const express = require('express');
 const loginRouter = express.Router();
 const bodyParser = express.json();
+const knex = require('knex')
+const LoginService = require('./login-service');
+//const xss = require('xss')
+const path = require('path')
+
+const db = knex({
+    client: 'pg',
+    connection: 'postgresql://dunder_mifflin@localhost/todo_app'
+  })
 
 
 const logins = [
     {
         "id": "123456",
-        "username": "hello@gmail.com" ,
+        "email": "hello@gmail.com" ,
     "password": "password1"
 },
 {
     "id": "45364576",
-    "username": "bye@gmail.com" ,
+    "email": "bye@gmail.com" ,
 "password": "password2"
 },
 {
     "id": "helloworld",
-    "username": "wow@gmail.com" ,
+    "email": "wow@gmail.com" ,
 "password": "password3"
 },
 ]
@@ -24,21 +33,22 @@ const logins = [
 loginRouter
 .route('/api/login')
 .post(bodyParser, (req, res) => {
-    const { username, password} = req.body
-    if(!username) {
+const { id, email, password} = req.body
+    const newLogin = {id, email, password}
+    if(!email) {
         return res
             .status(400)
-            .send('Username Required');
+            .send('Email Required');
     }
     if(!password) {
         return res
             .status(400)
             .send('Password Required');
     }
-    if(username.length < 6 || username.length > 20) {
+    if(email.length < 6 || email.length > 20) {
         return res
             .status(400)
-            .send('Username must be between 6 and 20 characters long')
+            .send('Email must be between 6 and 20 characters long')
     }
     if(password.length < 8 || password.length > 25) {
         return res
@@ -50,14 +60,24 @@ loginRouter
             ...req.body
         })
     }
-})
+    db 
+    .insert( newLogin)
+    .into( 'login')
+    .returning('*')
+    .then ( result => {
+        return res.status( 201).json( result);
+    })
+    .catch(err => {
+        return res.status( 500 ).end()
+    });
+});
+
 
 loginRouter
 .route('/api/login/:id')
 .get(( req, res) => {
     const { id } = req.params;
-    const login = logins.find( li => li.id == id);
-
+    const login = logins.find(c => c.id == id);
     if(!login) {
         return res
             .status(404)
@@ -66,10 +86,10 @@ loginRouter
     res.json(login)
 })
 .delete((req, res) => {
-    const {id} = req.params;
+    //const knex = req.app.get('db')
+    const id = req.params.id;
 
-        const index = logins.findIndex(c => c.id === id) ;
-
+    const index = logins.findIndex(c => c.id === id) ;
         if(index === -1 ) {
             return res
             .status(404)
@@ -77,6 +97,7 @@ loginRouter
         }
         logins.splice(index, 1);
         res.send('Deleted')
+        
 })
 
 module.exports = loginRouter

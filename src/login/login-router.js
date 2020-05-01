@@ -47,7 +47,7 @@ loginRouter
     }
     else {
         res.status(201).json({
-            message: "Login was created!"
+            ...req.body
         })
     }
 })

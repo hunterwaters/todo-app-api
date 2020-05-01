@@ -1,10 +1,10 @@
 const express = require('express')
 const addtodoRouter = express.Router()
-const bodyParser = express.json()
+const jsonParser = express.json()
 
 addtodoRouter
     .route('/api/addtodo')
-    .post( bodyParser, (req, res) => {
+    .post( jsonParser, (req, res) => {
         const { title, summary, date} = req.body
         if(!title) {
             return res
@@ -23,7 +23,7 @@ addtodoRouter
         }
         else {
             res.status(201).json({
-                message: "Todo was created!"
+                ...req.body
             })
         }
     })

@@ -50,6 +50,43 @@ describe('DELETE /api/todolist/:id', () => {
     });
 });
 
+describe(`POST /api/login`, () => {
+    it(`creates a login, responding with  201 and the new login in json format`, function () {
+        const newLogin = {
+            username: "testusername",
+            password: "testpassword"
+        }
+        return supertest(app)
+        .post('/api/login')
+        .send(newLogin)
+        .expect(201)
+        .expect( res => {
+            expect(res.body.username).to.eql(newLogin.username)
+            expect(res.body.password).to.eql(newLogin.password)
+            })
+        })
+    })
+
+describe(`POST /api/addtodo`, () => {
+    it(`creates a new todo, responding with 201 and the new todo in json format`, function () {
+            const newTodo = {
+                title: "Test Title",
+                summary: "Test Summary",
+                date: "03/02/2012"
+            }
+            return supertest(app)
+            .post('/api/addtodo')
+            .send(newTodo)
+            .expect(201)
+            .expect( res => {
+                expect(res.body.title).to.eql(newTodo.title)
+                expect(res.body.summary).to.eql(newTodo.summary)
+                expect(res.body.date).to.eql(newTodo.date)
+                })
+            })
+        })
+
+
 
 
 

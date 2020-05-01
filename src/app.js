@@ -8,7 +8,6 @@ const app = express();
 const knex = require('knex')
 require('dotenv/config');
 const bodyParser = require('body-parser')
-
 const loginRouter = require('./login/login-router')
 const todolistRouter = require('./todolist/todolist-router')
 const addtodoRouter = require('./addtodo/addtodo-router')
@@ -49,9 +48,6 @@ app.use(( error, req, res, next) => {
     });
 });
 
-app.get('/', (req, res) => {
-    res.send("Hello, world!");
-});
 
 module.exports = app
 

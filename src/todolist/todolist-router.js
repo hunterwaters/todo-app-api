@@ -2,17 +2,30 @@ const express = require('express')
 const todolistRouter = express.Router()
 const bodyParser = express.json()
 
+const todolists = [
+    {
+        "id": "123456",
+        "title": "this is title 1",
+        "summary": "This is summary 1",
+        "date": "01/02/2013"
+},
+{
+    "id": "45364576",
+    "title": "this is title 2",
+    "summary": "This is summary 2",
+     "date": "01/02/2011"
+},
+{
+    "id": "helloworld",
+    "title": "this is title 3",
+    "summary": "This is summary 3",
+    "date": "01/02/2016"
+}
+]
 
-todolistRouter
-    .route('/api/todolist')
-    .get((req, res) => {
-        res.status(200).json({
-            message: 'Handling GET requests to /todolist'
-        });
-    })
 
     todolistRouter
-        .route('./api/todolist/:id' )
+        .route('/api/todolist/:id' )
         .get(( req, res) => {
             const { id } = req.params;
     const todolist = todolists.find(c => c.id == id);
@@ -27,14 +40,14 @@ todolistRouter
         .delete(( req, res) => {
             const {id} = req.params;
 
-        const index = logins.findIndex(c => c.id === id) ;
+        const index = todolists.findIndex(c => c.id === id) ;
 
         if(index === -1 ) {
             return res
             .status(404)
-            .send('Login not Found!');
+            .send('TodoList not Found!');
         }
-        logins.splice(index, 1);
+        todolists.splice(index, 1);
         res.send('Deleted')
         })
 

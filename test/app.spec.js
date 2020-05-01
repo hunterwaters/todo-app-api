@@ -1,4 +1,5 @@
-
+const { expect } = require('chai');
+const supertest = require ('supertest');
 const app = require ('../src/app')
 
 
@@ -10,13 +11,6 @@ describe('App', () => {
     })
 })
 
-describe('findLogin', () => {
-    it('GET/  responds with 400 if id is not available', () => {
-        return supertest(app)
-        .get('/api/logins/10')
-        .expect(400);
-    })
-})
 
 
 

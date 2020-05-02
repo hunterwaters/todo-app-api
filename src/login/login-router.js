@@ -3,7 +3,14 @@ const loginRouter = express.Router();
 const bodyParser = express.json();
 const knex = require('knex')
 const LoginService = require('./login-service');
-//const xss = require('xss')
+const xss = require('xss')
+
+const serializeLogin = login => ({
+    id: login.id,
+    email: xss(login.email),
+    password: xss(login.password)
+})
+
 const path = require('path')
 
 const db = knex({
@@ -75,7 +82,16 @@ const { id, email, password} = req.body
 
 loginRouter
 .route('/api/login/:id')
-.get(( req, res) => {
+.get(( req, res, next) => {
+   // res.json(serializeLogin(res.login))
+    
+    const knexInstance = req.app.get('db')
+    LoginService.getAllLogins(knexInstance)
+        .then(logins => {
+            res.json(logins.map(serializeLogin))
+        })
+        .catch(next)
+/*
     const { id } = req.params;
     const login = logins.find(c => c.id == id);
     if(!login) {
@@ -84,20 +100,21 @@ loginRouter
             .send(`Login with id ${id} not found`)
     }
     res.json(login)
+    */
+    
 })
-.delete((req, res) => {
-    //const knex = req.app.get('db')
-    const id = req.params.id;
+.delete((req, res, next) => {
+    LoginService.deleteLogin(
+        req.app.get('db'),
+        req.params.id
+    )
+    .then(numRowsAffected => {
+        res
+        .send('Deleted')
+        .status(204).end()
 
-    const index = logins.findIndex(c => c.id === id) ;
-        if(index === -1 ) {
-            return res
-            .status(404)
-            .send('Login not Found!');
-        }
-        logins.splice(index, 1);
-        res.send('Deleted')
-        
+    })
+    .catch(next)
 })
 
 module.exports = loginRouter

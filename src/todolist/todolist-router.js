@@ -1,6 +1,13 @@
 const express = require('express')
 const todolistRouter = express.Router()
 const bodyParser = express.json()
+const TodoListService = require('./todolist-service');
+const knex = require('knex')
+
+const db = knex({
+    client: 'pg',
+    connection: 'postgresql://dunder_mifflin@localhost/todo_app'
+  })
 
 const todolists = [
     {
@@ -37,18 +44,18 @@ const todolists = [
     }
     res.json(todolist);
         })
-        .delete(( req, res) => {
-            const {id} = req.params;
-
-        const index = todolists.findIndex(c => c.id === id) ;
-
-        if(index === -1 ) {
-            return res
-            .status(404)
-            .send('TodoList not Found!');
-        }
-        todolists.splice(index, 1);
-        res.send('Deleted')
+        .delete(( req, res, next) => {
+            TodoListService.deletetodo(
+                req.app.get('db'),
+                req.params.id
+            )
+            .then(numRowsAffected => {
+                res
+                .send('Deleted')
+                .status(204).end()
+        
+            })
+            .catch(next)
         })
 
     module.exports = todolistRouter

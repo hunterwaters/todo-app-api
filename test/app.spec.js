@@ -37,7 +37,7 @@ describe('DELETE /api/login/:id', () => {
         return supertest(app)
         .delete('/api/login/1234')
         .query({ id: 1234})
-        .expect(404, 'Login not Found!')
+        .expect(500)
     });
 });
 
@@ -46,7 +46,7 @@ describe('DELETE /api/todolist/:id', () => {
         return supertest(app)
         .delete('/api/todolist/1234')
         .query({ id: 1234})
-        .expect(404, 'TodoList not Found!')
+        .expect(500)
     });
 });
 

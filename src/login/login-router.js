@@ -19,24 +19,6 @@ const db = knex({
   })
 
 
-const logins = [
-    {
-        "id": "123456",
-        "email": "hello@gmail.com" ,
-    "password": "password1"
-},
-{
-    "id": "45364576",
-    "email": "bye@gmail.com" ,
-"password": "password2"
-},
-{
-    "id": "helloworld",
-    "email": "wow@gmail.com" ,
-"password": "password3"
-},
-]
-
 loginRouter
 .route('/api/login')
 .post(bodyParser, (req, res) => {
@@ -82,28 +64,27 @@ const { id, email, password} = req.body
 
 loginRouter
 .route('/api/login/:id')
-.get(( req, res, next) => {
-   // res.json(serializeLogin(res.login))
-    
-    const knexInstance = req.app.get('db')
-    LoginService.getAllLogins(knexInstance)
-        .then(logins => {
-            res.json(logins.map(serializeLogin))
-        })
-        .catch(next)
-/*
-    const { id } = req.params;
-    const login = logins.find(c => c.id == id);
-    if(!login) {
-        return res
-            .status(404)
-            .send(`Login with id ${id} not found`)
-    }
-    res.json(login)
-    */
-    
+.all(( req, res, next) => {
+    LoginService.getById(
+        req.app.get('db'),
+        req.params.id
+    )
+    .then(login => {
+        if(!login) {
+            return res.status(404).json({
+                error: {message: `Login does not exist`}
+            })
+        }
+        res.login = login
+        next()
+    })
+    .catch(next)
 })
-.delete((req, res, next) => {
+.get((req, res, next) => {
+    res.json(serializeLogin(res.login))
+})
+
+    .delete((req, res, next) => {
     LoginService.deleteLogin(
         req.app.get('db'),
         req.params.id

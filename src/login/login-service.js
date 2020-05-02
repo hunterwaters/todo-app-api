@@ -11,7 +11,7 @@ const LoginService = {
     getById(knex, id) {
         return knex('login')
         .select('*')
-        .where({ id })
+        .where('id', id)
         .first()
     },
 }

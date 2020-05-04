@@ -21,7 +21,7 @@ const db = knex({
 
 loginRouter
 .route('/api/login')
-.post(bodyParser, (req, res) => {
+.post(bodyParser, (req, res, next) => {
 const { id, email, password} = req.body
     const newLogin = {id, email, password}
     if(!email) {
@@ -44,11 +44,6 @@ const { id, email, password} = req.body
             .status(400)
             .send('Password must be between 8 and 25 characters long')
     }
-    else {
-        res.status(201).json({
-            ...req.body
-        })
-    }
     db 
     .insert( newLogin)
     .into( 'login')
@@ -56,9 +51,7 @@ const { id, email, password} = req.body
     .then ( result => {
         return res.status( 201).json( result);
     })
-    .catch(err => {
-        return res.status( 500 ).end()
-    });
+    .catch(next)
 });
 
 

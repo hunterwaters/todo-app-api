@@ -16,17 +16,6 @@ const morganOption = (NODE_ENV === 'production')
 ? 'tiny'
 : 'common';
 
-
-app.use(morgan(morganOption))
-app.use(helmet())
-app.use(cors())
-app.use(express.json());
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json())
-app.use(loginRouter);
-app.use(todolistRouter)
-app.use(addtodoRouter)
-
 app.use((req ,res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 
@@ -38,6 +27,18 @@ app.use((req ,res, next) => {
         }
         next();
 });
+
+
+app.use(morgan(morganOption))
+app.use(helmet())
+app.use(cors())
+app.use(express.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.json())
+app.use(loginRouter);
+app.use(todolistRouter)
+app.use(addtodoRouter)
+
 
 app.use(( error, req, res, next) => {
     res.status(error.status || 500);

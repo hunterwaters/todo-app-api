@@ -34,12 +34,12 @@ const { id, email, password} = req.body
             .status(400)
             .send('Password Required');
     }
-    if(email.length < 6 || email.length > 20) {
+    if(email.length < 6 || email.length > 40) {
         return res
             .status(400)
             .send('Email must be between 6 and 20 characters long')
     }
-    if(password.length < 8 || password.length > 25) {
+    if(password.length < 5 || password.length > 30) {
         return res
             .status(400)
             .send('Password must be between 8 and 25 characters long')

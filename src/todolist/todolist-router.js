@@ -18,6 +18,24 @@ const db = knex({
 
   })
 
+ todolistRouter
+  .route('/api/todolist')
+  .get((req, res, next) => {
+      const {title, summary, date } = req.body
+      const gettodo = {title, summary, date}
+      db 
+      .from( 'todo_chart')
+      .returning('*')
+      .then ( result => {
+          return res.status( 200).json( result);
+      })
+      .catch(err => {
+          return res.status( 500 ).end()
+      })
+  })
+
+
+
 
     todolistRouter
         .route('/api/todolist/:id' )

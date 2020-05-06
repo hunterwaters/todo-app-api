@@ -12,8 +12,8 @@ const db = knex({
 addtodoRouter
     .route('/api/addtodo')
     .post( jsonParser, (req, res) => {
-        const { id, title, summary, date} = req.body
-    const addTodo = {id, title, summary, date}
+        const {  title, summary, date} = req.body
+    const addTodo = { title, summary, date}
         if(!title) {
             return res
                 .status(400)
@@ -29,14 +29,9 @@ addtodoRouter
                 .status(400)
                 .send('Date is Required')
         }
-        else {
-            res.status(201).json({
-                ...req.body
-            })
-        }
         db 
         .insert( addTodo)
-        .into( 'add_todo')
+        .into( 'todo_chart')
         .returning('*')
         .then ( result => {
             return res.status( 201).json( result);

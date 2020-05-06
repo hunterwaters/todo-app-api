@@ -16,9 +16,9 @@ const LoginService = {
     },
     hasUserWithEmail(knex, email) {
         return knex('login')
-        .where ( {email } )
+        .select('*')
+        .where('email', email)
         .first()
-        .then((email) => !!email);
     },
 }
 

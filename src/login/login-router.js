@@ -57,9 +57,10 @@ const { id, email, password} = req.body
 loginRouter
 .route('api/login')
 .get((req, res, next) => {
+    const email = req.body.email
     LoginService.hasUserWithEmail(
         req.app.get('db'),
-        req.params.email
+        req.params.login
     )
     .then(email => {
         if(email.length > 0) {

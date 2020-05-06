@@ -54,6 +54,26 @@ const { id, email, password} = req.body
     .catch(next)
 });
 
+loginRouter
+.route('api/login')
+.get((req, res, next) => {
+    const email = req.body.email
+    LoginService.hasUserWithEmail(
+        req.app.get('db'),
+        req.params.email
+    )
+    .then(email => {
+        if(email.length > 0) {
+            res.send('Email already in use')
+        }
+        else if(error) {
+            throw error
+        }
+    })
+})
+  
+     
+
 
 loginRouter
 .route('/api/login/:id')
@@ -75,6 +95,7 @@ loginRouter
 })
 .get((req, res, next) => {
     res.json(serializeLogin(res.login))
+
 })
 
     .delete((req, res, next) => {

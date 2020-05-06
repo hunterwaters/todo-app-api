@@ -14,6 +14,13 @@ const LoginService = {
         .where('id', id)
         .first()
     },
+    hasUserWithEmail(knex, email) {
+        return knex
+        .from('login')
+        .where ( {email})
+        .first()
+        .then((email) => !!email);
+    },
 }
 
 module.exports = LoginService

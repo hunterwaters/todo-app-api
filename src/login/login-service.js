@@ -15,11 +15,14 @@ const LoginService = {
         .first()
     },
     hasUserWithEmail(knex, email) {
-        return knex
-        .from('login')
-        .where({ email})
+        return knex('login')
+        .select('*')
+        .where('email', email)
         .first()
-        .then((email) => !!email);
+        //.from('login')
+        //.where({ email})
+        //.first()
+       // .then((email) => !!email)
     },
 }
 

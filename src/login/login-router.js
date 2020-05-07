@@ -18,6 +18,38 @@ const db = knex({
     connection: 'postgresql://dunder_mifflin@localhost/todo_app'
   })
 
+loginRouter
+.route('/api/login')
+.post(bodyParser, (req, res) => {
+    const {id, email, password} = req.body
+    let newLogin = {
+        id,
+        email,
+        password
+    }
+    db
+    .select('*')
+    .from('login')
+    .where({email:email})
+    .then(result => {
+        if( result.length === 0) {
+            db
+            .insert(newLogin)
+            .into('login')
+            .returning('*')
+            .then(result => {
+                return res.status(201).json(result);
+            })
+            .catch(err => {
+                return res.status( 500 ).end();
+            });
+        }
+        else {
+            return res.status(400).end("That email already exists!")
+        }
+    });
+});
+
 
 loginRouter
 .route('/api/login')
@@ -53,26 +85,6 @@ const { id, email, password} = req.body
     })
     .catch(next)
 });
-
-loginRouter
-.route('api/login')
-.get((req, res, next) => {
-    const email = req.body.email
-    LoginService.hasUserWithEmail(
-        req.app.get('db'),
-        req.params.login
-    )
-    .then(email => {
-        if(email.length > 0) {
-            res.send('Email already in use')
-        }
-        else if(error) {
-            throw error
-        }
-    })
-})
-  
-     
 
 
 loginRouter

@@ -5,6 +5,7 @@ const knex = require('knex')
 const LoginService = require('./login-service');
 const xss = require('xss')
 
+
 const serializeLogin = login => ({
     id: login.id,
     email: xss(login.email),
@@ -46,6 +47,7 @@ loginRouter
         }
         else {
             return res.status(400).end("That email already exists!")
+            
         }
     });
 });

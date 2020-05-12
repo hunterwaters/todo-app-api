@@ -1,7 +1,6 @@
 const supertest = require ('supertest');
 const app = require ('../src/app')
 const knex = require('knex')
-//const {makeLoginsArray} = require('./logins.fixtures')
 
 const db = knex({
     client: 'pg',

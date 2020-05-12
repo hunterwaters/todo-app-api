@@ -47,7 +47,7 @@ loginRouter
         }
         else {
             return res.status(400).end("That email already exists!")
-            
+
         }
     });
 });
@@ -90,7 +90,7 @@ const { id, email, password} = req.body
 
 
 loginRouter
-.route('/api/login/:id')
+.route('/api/login/')
 .all(( req, res, next) => {
     LoginService.getById(
         req.app.get('db'),
@@ -109,6 +109,9 @@ loginRouter
 })
 .get((req, res, next) => {
     res.json(serializeLogin(res.login))
+    if(login) {
+    
+    }
 
 })
 

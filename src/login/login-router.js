@@ -45,11 +45,11 @@ loginRouter
         }
         else {
             db
-            .select('*')
+            .returning('*')
             .from('todo_chart')
             .where({login:email})
             .then(result => {
-                return res.status(201).json(result);
+                return res.status(200).json(result);
             })
             .catch(err => {
                 return res.status( 500 ).end();
@@ -134,6 +134,7 @@ loginRouter
 })
 .get((req, res, next) => {
     res.json(serializeLogin(res.login))
+
 })
 
     .delete((req, res, next) => {

@@ -21,12 +21,13 @@ const db = knex({
  todolistRouter
   .route('/api/todolist')
   .get((req, res, next) => {
-      const {title, summary, date, email} = req.body
-      const gettodo = {title, summary, date, login}
+      const {title, summary, date, login} = req.body
+      const gettodo = {title, summary, date}
       db 
-      .select('*')
+
+     .returning('*')
       .from( 'todo_chart')
-      .where({login: email})
+      .where({login: 'hwaters27@hotmail.com'})
       .then ( result => {
           return res.status( 200).json( result);
       })

@@ -7,7 +7,6 @@ const xss = require('xss')
 
 
 const serializeLogin = login => ({
-    id: login.id,
     email: xss(login.email),
     password: xss(login.password)
 })
@@ -22,9 +21,8 @@ const db = knex({
 loginRouter
 .route('/api/login')
 .post(bodyParser, (req, res) => {
-    const {id, email, password} = req.body
+    const {email, password} = req.body
     let newLogin = {
-        id,
         email,
         password
     }
@@ -46,8 +44,16 @@ loginRouter
             });
         }
         else {
-            return res.status(400).end("That email already exists!")
-
+            db
+            .select('*')
+            .from('todo_chart')
+            .where({login:email})
+            .then(result => {
+                return res.status(201).json(result);
+            })
+            .catch(err => {
+                return res.status( 500 ).end();
+            })
         }
     });
 });
@@ -56,8 +62,8 @@ loginRouter
 loginRouter
 .route('/api/login')
 .post(bodyParser, (req, res, next) => {
-const { id, email, password} = req.body
-    const newLogin = {id, email, password}
+const { email, password} = req.body
+    const newLogin = {email, password}
     if(!email) {
         return res
             .status(400)
@@ -88,6 +94,25 @@ const { id, email, password} = req.body
     .catch(next)
 });
 
+loginRouter
+.route('/api/login')
+.post(bodyParser, (req, res) => {
+    const {email, password} = req.body
+    const newLogin = {email, password}
+
+    db
+    .select('*')
+    .from('todo_chart')
+    .where({login:email})
+    .then(result => {
+        return res.status(201).json(result);
+    })
+    .catch(err => {
+        return res.status( 500 ).end();
+    })
+});
+
+
 
 loginRouter
 .route('/api/login/')
@@ -109,10 +134,6 @@ loginRouter
 })
 .get((req, res, next) => {
     res.json(serializeLogin(res.login))
-    if(login) {
-    
-    }
-
 })
 
     .delete((req, res, next) => {

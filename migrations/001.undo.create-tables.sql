@@ -1,0 +1,5 @@
+DROP TABLE IF EXISTS login;
+
+DROP TABLE IF EXISTS todo_chart;
+
+
